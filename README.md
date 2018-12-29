@@ -1,4 +1,4 @@
-![Image text](https://github.com/freeddser/ddser/blob/master/static/tpl/default/images/favicon.png?raw=true)
+<div align=center><img width="150" height="150" src="https://raw.githubusercontent.com/freeddser/ddser/master/static/tpl/default/images/favicon.png"/></div>
 
 #### DDSER
 # A  tool for system admin, Give a shell for everyone
