@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<result>
+	<syntax_fail>
+		<failed_info>
+			<sql>safdsa
+safasfd
+123</sql>
+			<error_code>1064</error_code>
+			<error_msg>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'safdsa
+safasfd
+123' at line 1</error_msg>
+			<line>1</line>
+		</failed_info>
+	</syntax_fail>
+	<info>
+		<non_ascii>0</non_ascii>
+		<is_all_dml></is_all_dml>
+	</info>
+</result>

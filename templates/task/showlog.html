@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/role -->
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+  <meta charset="utf-8" /> 
+  <title>ShowTask</title> 
+  <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" /> 
+   <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script> 
+
+
+
+ </head> 
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+ 
+ <!--start  搜索end-->
+ 
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Show Task Log</span></h3> 
+    <input type="button" id="task_id" style="display:none;" name="task_id" value="[[.task_id]]"><br>
+    <div id="adminMenu"></div>
+
+<h4 style="margin-bottom:20px;"><span class="label label-primary">Log:</span></h4> 
+    <div id="tasklog_content" style="background:#000; color:#FFF"></div>
+
+<p></p>
+<input type="button" class="btn btn-xs btn-primary submit-btn" name="Submit" onclick="window.location.href=''" value="Refresh"><br>
+
+ 
+ 
+
+ </body>
+   <script>
+//生成增加方法的界面
+// var task_id=;
+$(document).ready(function(){
+
+
+  $.ajax({
+    type: "get",
+    
+    url: "/task/tasklog",
+    data: {type:"showlog",task_id:$("#task_id").val()},
+    success: function(privigedata) {
+
+        console.log(privigedata.data);
+        var tasklogHtml=""
+
+        var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger">';
+        menuHtml+='<td>id</td><td>task_name</td><td>task_type_desc</td><td>task_shell</td><td>task_status</td><td>client_infos</td><td>create_date</td><td>update_time</td><td>Pusher</td></tr>';
+
+        $.each(privigedata.data,
+        function(i, n) {
+                menuHtml += '<tr><td>'+n.id+'</td>';
+                menuHtml += '<td>'+n.taskname+'</td>';
+                menuHtml += '<td>'+n.task_type_desc+'</td>';
+                menuHtml += '<td>'+n.task_shell+" "+n.shell_params+'</td>';
+                menuHtml += '<td>'+n.task_status+'</td>';
+                menuHtml += '<td>'+n.client_infos+'</td>';
+                menuHtml += '<td>'+n.create_time+'</td>';
+                menuHtml += '<td>'+n.update_time+'</td>';
+                menuHtml += '<td>'+n.pusher+'</td></tr>';
+                var reg=new RegExp("SPACE","g");
+                tasklogHtml+=n.task_logs.replace(reg,"&nbsp;");
+      
+        });
+        menuHtml += '<tbody></table>'; 
+        $("#adminMenu").empty().html(menuHtml);
+        $("#tasklog_content").empty().html(tasklogHtml);
+        
+    }
+});
+});
+
+
+
+
+
+
+  
+</script> 
+</html>

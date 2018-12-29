@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+    <script language="javascript" src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+    <style type="text/css">
+    .pass-span {
+        display: inline-block;
+        width: 60px;
+        font-family: 'Source Sans Pro', sans-serif;
+    }
+    </style>
+</head>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+    <h3 style="margin-bottom:20px;" onclick="ShowChangePassWord()"><span class="label label-primary">ChangePass</span></h3>
+    <!-- <input type="button" class="btn btn-lg btn-primary" name="ChangePass" value="ChangePass" /> -->
+    <!-- <br> -->
+    <div id="changepass-div" style="display:none;">
+        <span class="pass-span">OldPass:</span>
+        <input type="password" name="password1" id="oldpass" value="">
+        <br> <span class="pass-span">NewPass:</span>
+        <input type="password" name="password1" id="password1" value="">
+        <br> <span class="pass-span">Again:</span>
+        <input type="password" name="password2" id="password2" value="">
+        <br>
+        <input type="button" class="btn btn-xs btn-primary" onclick="ChangePassWord()" name="Confirm" value="Confirm" />
+        <!--   <h1>修改头像</h1>
+    <h1>修改密码</h1> -->
+    </div>
+</body>
+<script type="text/javascript">
+function ShowChangePassWord() {
+    $("#changepass-div").show();
+
+}
+
+function ChangePassWord() {
+    var oldpass = $("#oldpass").val();
+    var password1 = $("#password1").val();
+    var password2 = $("#password2").val();
+
+    var bz = new Array();
+    bz.push(oldpass);
+    bz.push(password1);
+    bz.push(password2);
+
+
+    for (var i in bz) {
+        if (bz[i] === "") {
+            alert("input can not null");
+            return false;
+        }
+    }
+
+    if (password1 != password2 || password1.length < 6) {
+        alert("input password is not the same,password length do not < 6");
+        return false;
+    }
+
+
+
+    confirm_ = confirm('This password will update ! Are you sure?');
+    if (confirm_) {
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/profile",
+            data: {
+                oldpass: oldpass,
+                password1: password1,
+                password2: password2,
+                type: "updatepass"
+            },
+            success: function(data) {
+                console.log(data);
+                if (data == "1") {
+                    alert("password update ok!");
+                    window.location.href = "/profile";
+
+                }
+            }
+        });
+    }
+
+
+}
+</script>
+
+</html>

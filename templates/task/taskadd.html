@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/role -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <title>AddTask</title>
+    <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+    <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+    <style>
+    .task-row {
+        margin-bottom: 20px;
+        font-size: 0;
+    }
+    
+    .task-row label {
+        display: inline-block;
+        width: 150px;
+        font-size: 14px;
+        line-height: 14px;
+    }
+    
+    .task-row input,
+    .task-row select {
+        display: inline-block;
+        height: 30px;
+        width: 200px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+    
+    .redonly {
+        color: red;
+        font-size: 12px;
+        line-height: 12px;
+        margin-left: 10px;
+    }
+    
+    .submit-btn {
+        width: 350px;
+        padding: 7px 5px;
+        box-sizing: border-box;
+    }
+    
+    .task-list {
+        margin-left: 140px;
+    }
+    </style>
+</head>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+    <!--start  搜索end-->
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Add Task</span></h3>
+    <form>
+        <div id="adminMenu" class="task-row">
+            <!--<input type="button" class="btn btn-xs btn-primary" name="task_type" value="task_type">-->
+            <label name="task_type">task_type</label>
+            <select class="selector" name="atc_type"></select>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="token_id" value="token_id">-->
+            <label name="token_id">token_id</label>
+            <input readonly="true" type="text" id="token_id" name="token_id" value="token_id"><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_type" value="task_type">-->
+            <label name="task_type">task_type</label>
+            <input type="text" readonly="true" id="task_type" name="task_type"><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_type_desc" value="task_type_desc">-->
+            <label name="task_type_desc">task_type_desc</label>
+            <input readonly="true" type="text" id="task_type_desc" name="task_type" value=""><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_shell" value="task_shell">-->
+            <label name="task_shell">task_shell</label>
+            <input readonly="true" type="text" id="task_shell" name="task_shell" value="task_shell"><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_name" value="task_name">-->
+            <label name="task_name">task_name</label>
+            <input type="text" id="task_name" name="task_name" value="task_name">
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="shell_params" value="shell_params">-->
+            <label name="shell_params">shell_params</label>
+            <input type="text" id="shell_params" name="shell_params" value="shell_params">
+        </div>
+        <input type="button" class="btn btn-xs btn-primary submit-btn" name="Submit" onclick="AddTask()" value="Submit">
+        <br>
+    </form>
+    <!--   
+
+    <p id="adminMenu"></p>
+   
+ <input type="button" class="btn btn-xs btn-primary" name="token_id" value="token_id"><input  readonly="true" type="text" id="token_id" name="token_id" value="token_id" />readonly<br>
+<input type="button" class="btn btn-xs btn-primary" name="task_type"  value="task_type"><input type="text" readonly="true" id="task_type" name="task_type" />readonly<br>
+<input type="button" class="btn btn-xs btn-primary" name="task_type_desc"  value="task_type_desc"><input readonly="true" type="text" id="task_type_desc" name="task_type" value="" />readonly<br>
+
+ <input type="button" class="btn btn-xs btn-primary" name="task_shell"  value="task_shell"><input readonly="true" type="text" id="task_shell" name="task_shell" value="task_shell" />readonly<br>
+<input type="button" class="btn btn-xs btn-primary" name="task_name"  value="task_name"><input type="text" id="task_name" name="task_name" value="task_name" /><br>
+
+
+ <input type="button" class="btn btn-xs btn-primary" name="shell_params"  value="shell_params"><input type="text" id="shell_params" name="shell_params" value="shell_params" /><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button"  class="btn btn-xs btn-primary" name="Submit" onclick="AddTask()" value="Submit"><br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><a href="/task/show">task list</a></p>
+ -->
+    <script>
+    //生成增加方法的界面
+    $.ajax({
+        type: "get",
+
+        url: "/task/add",
+        data: {
+            type: "gettasktype"
+        },
+        success: function(privigedata) {
+
+            console.log(privigedata.data);
+            var menuHtml = '<label name="task_type">task_type</label>'
+            menuHtml += '<select class="selector" name="atc_type">';
+            menuHtml+='<option value="-----default"></option>';
+            $.each(privigedata.data,
+                function(i, n) {
+                    menuHtml += '<option value="' + n.id + '" data-task_shell="' + n.task_shell + '" data-task_shell_params="' + n.task_shell_params + '" data-token_id="' + n.token_id + '" data-task_type_desc="' + n.task_type_desc + '" data-task_type="' + n.id + '">' + n.task_type_desc + '</option>';
+                });
+            menuHtml += '</select>';
+
+
+
+            $("#adminMenu").empty().html(menuHtml);
+            console.log($('.selector').length);
+            $(".selector").on('change', function() {
+                // console.log($(this).val());
+                // console.log($(this).find('option:selected').data('task_shell'));
+
+                $("#task_shell").val($(this).find('option:selected').data('task_shell'));
+                $("#shell_params").val($(this).find('option:selected').data('task_shell_params'));
+                $("#token_id").val($(this).find('option:selected').data('token_id'));
+                $("#task_type_desc").val($(this).find('option:selected').data('task_type_desc'));
+                $("#task_type").val($(this).find('option:selected').data('task_type'));
+                $("#task_name").val($(this).find('option:selected').data('task_type_desc'));
+
+
+            });
+
+
+        }
+    });
+
+
+    function AddTask() {
+
+
+
+        var token_id = $("#token_id").val();
+        var task_type = $("#task_type").val();
+        var task_type_desc = $("#task_type_desc").val();
+        var task_shell = $("#task_shell").val();
+        var shell_params = $("#shell_params").val();
+
+
+        /*如果task_type是sql执行的，那就把参数里的空格处理下*/
+        if (task_type == 19) {
+            shell_params = shell_params.replace(" ", '');
+        }
+
+        var task_name = $("#task_name").val();
+
+
+        //校验数据不能为空，再写一个ajax提交数据
+        if (shell_params.indexOf(';') != -1) {
+            alert(" shell_params can not use ';'");
+            return false;
+        }
+
+        var bz = new Array();
+        bz.push(token_id);
+        bz.push(task_type);
+        bz.push(task_type_desc);
+        bz.push(task_shell);
+        bz.push(task_name);
+
+        for (var i in bz) {
+            if (bz[i] === "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will add current Task! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/task/add",
+                data: {
+                    token_id: token_id,
+                    task_type: task_type,
+                    task_type_desc: task_type_desc,
+                    task_shell: task_shell,
+                    task_name: task_name,
+                    shell_params: shell_params,
+                    type: "add"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        alert("task Add OK!");
+                        // window.location.href = "/admin/manager/resource";
+                    }
+                }
+            });
+        }
+
+
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/role -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <title>Manager Task Type</title>
+    <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+    <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+    <style>
+    .task-row {
+        margin-bottom: 20px;
+        font-size: 0;
+    }
+    
+    .task-row label {
+        display: inline-block;
+        width: 150px;
+        font-size: 14px;
+        line-height: 14px;
+    }
+    
+    .task-row input,
+    .task-row select {
+        display: inline-block;
+        height: 30px;
+        width: 200px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+    
+    .redonly {
+        color: red;
+        font-size: 12px;
+        line-height: 12px;
+        margin-left: 10px;
+    }
+    
+    .submit-btn {
+        width: 350px;
+        padding: 7px 5px;
+        box-sizing: border-box;
+    }
+    
+    .task-list {
+        margin-left: 140px;
+    }
+    </style>
+</head>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+    <!--start  搜索end-->
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Manager Task Type</span></h3>
+    <form>
+        <div id="adminMenu" class="task-row">
+            <label name="task_type">task_type</label>
+            <select class="selector" name="atc_type"></select>
+        </div>
+
+        <div id="type" class="task-row">
+            <label name="type">type</label>
+            <select class="selector-tk_type" name="type">
+            <option value="---">---</option>
+                 <option value="web">web</option>
+                 <option value="api">api</option>
+            </select>
+        </div>
+
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="token_id" value="token_id">-->
+            <label name="token_value">token_value</label>
+            <input readonly="true" type="text" id="token_value" name="token_value"><span class="redonly">readonly</span>
+        </div>
+        <!-- 这一段是用来增加一个新任务类型的start -->
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="token_id" value="token_id">-->
+            <label name="token_id">token_id</label>
+            <input readonly="true" type="text" id="token_id" name="token_id"><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_type" value="task_type">-->
+            <label name="task_type">role_id</label>
+            <input type="text" readonly="true" id="role_id" name="task_type"><span class="redonly">readonly</span>
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_type_desc" value="task_type_desc">-->
+            <label name="task_type_desc">task_type_desc</label>
+            <input type="text" id="task_type_desc" name="task_type" value="">
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="task_shell" value="task_shell">-->
+            <label name="task_shell">task_shell</label>
+            <input type="text" id="task_shell" name="task_shell">
+        </div>
+        <div class="task-row">
+            <!-- <input type="button" class="btn btn-xs btn-primary" name="shell_params" value="shell_params">-->
+            <label name="shell_params">shell_params</label>
+            <input type="text" id="shell_params" name="shell_params">
+        </div>
+        <input type="button" class="btn btn-xs btn-primary submit-btn" name="Add" onclick="AddNewTaskTotoken()" value="AddTask">
+        <br>
+        <!-- 这一段是用来增加一个新任务类型的end -->
+        <div id="tasktypelist"></div>
+    </form>
+    <script>
+    //生成增加方法的界面
+    $.ajax({
+        type: "get",
+
+        url: "/admin/manager/roletasktype",
+        data: {
+            type: "gettokentype"
+        },
+        success: function(privigedata) {
+
+            console.log(privigedata.data);
+            var menuHtml = '<label name="task_group">task_group</label>'
+            menuHtml += '<select class="selector" name="atc_type">';
+            menuHtml += '<option value="-----default"></option>';
+            $.each(privigedata.data,
+                function(i, n) {
+                    menuHtml += '<option value="' + n.id + '" data-role-id="' + n.role_id + '" data-token-id="' + n.id + '" data-token="' + n.token + '">' + n.role_name + '</option>';
+                });
+            menuHtml += '</select>';
+
+
+
+            $("#adminMenu").empty().html(menuHtml);
+            console.log($('.selector').length);
+            $(".selector").on('change', function() {
+                // console.log($(this).val());
+                // console.log($(this).find('option:selected').data('task_shell'));
+                // alert($(this).find('option:selected').var());
+
+                // alert($(this).find('option:selected').data('token-id'));
+
+                // $("#task_shell").val($(this).find('option:selected').data('task_shell'));
+                // $("#shell_params").val($(this).find('option:selected').data('task_shell_params'));
+                // 得到当前token组的role-id token-id为增加功能做前提
+                $("#token_id").val($(this).find('option:selected').data('token-id'));
+                $("#token_value").val($(this).find('option:selected').data('token'));
+
+
+                $("#role_id").val($(this).find('option:selected').data('role-id'));
+                // $("#task_type_desc").val($(this).find('option:selected').data('task_type_desc'));
+                // $("#task_type").val($(this).find('option:selected').data('task_type'));
+                // $("#task_name").val($(this).find('option:selected').data('task_type_desc'));
+                // 
+                GetOneTokenType($(this).find('option:selected').data('token-id'));
+
+
+
+            });
+
+
+        }
+    });
+
+
+    function GetOneTokenType(token_id) {
+
+
+        jQuery.ajax({
+            type: "GET",
+            url: "/admin/manager/roletasktype",
+            data: {
+                token_id: token_id,
+                // task_type: task_type,
+                // task_type_desc: task_type_desc,
+                // task_shell: task_shell,
+                // task_name: task_name,
+                // shell_params: shell_params,
+                type: "getonetokentype"
+            },
+            success: function(privigedata) {
+                console.log(privigedata);
+
+                var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger"><td>task_type_desc</td><td>task_shell</td><td>task_shell_params</td><td>type</td><td>create_time</td><td>operation</td></tr>';
+                $.each(privigedata.data,
+                    function(i, n) {
+                        menuHtml += '<tr><td>' + n.task_type_desc + '</td>';
+                        menuHtml += '<td>' + n.task_shell + '</td>';
+                        menuHtml += '<td>' + n.task_shell_params + '</td>';
+                        menuHtml += '<td>' + n.type + '</td>';
+                        menuHtml += '<td>' + n.create_time + '</td>';
+                        menuHtml += '<td><a href="#" onclick="TaskDelid(' + n.id + ')">Delete</a></td></tr>'
+                    });
+                menuHtml += '<tbody></table>';
+
+
+
+                $("#tasktypelist").empty().html(menuHtml);
+
+
+                // if (data == "1") {
+                //     alert("task Add OK!");
+                //     // window.location.href = "/admin/manager/resource";
+                // }
+            }
+        });
+
+
+
+    }
+
+    function TaskDelid(id) {
+        confirm_ = confirm('This action will delete current task! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "GET",
+                url: "/admin/manager/roletasktype?type=deletetask&id=" + id,
+                data: {},
+                success: function(data) {
+                    if (data == "1") {
+                        window.location.href = "/admin/manager/roletasktype";
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    function AddNewTaskTotoken() {
+
+
+
+        var token_id = $("#token_id").val();
+        var role_id = $("#role_id").val();
+        var task_type_desc = $("#task_type_desc").val();
+        var task_shell = $("#task_shell").val();
+        var shell_params = $("#shell_params").val();
+        var tk_type=$(".selector-tk_type").val();
+//        alert($(".selector-tk_type").val());
+
+
+        // /*如果task_type是sql执行的，那就把参数里的空格处理下*/
+        // if (task_type == 19) {
+        //     shell_params = shell_params.replace(" ", '');
+        // }
+
+        // var task_name = $("#task_name").val();
+
+
+        //校验数据不能为空，再写一个ajax提交数据
+        if (shell_params.indexOf(';') != -1) {
+            alert(" shell_params can not use ';'");
+            return false;
+        }
+
+        var bz = new Array();
+        bz.push(token_id);
+        bz.push(role_id);
+        bz.push(task_type_desc);
+        bz.push(task_shell);
+//        bz.push(shell_params);
+        bz.push(tk_type)
+
+        for (var i in bz) {
+            if (bz[i] === "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will add current Task! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/manager/roletasktype",
+                data: {
+                    token_id: token_id,
+                    role_id: role_id,
+                    task_type_desc: task_type_desc,
+                    task_shell: task_shell,
+                    shell_params: shell_params,
+                    tk_type:tk_type,
+                    type: "addtask"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        alert("task Add OK!");
+                        window.location.href = "/admin/manager/roletasktype";
+                    }
+                }
+            });
+        }
+
+
+    }
+    </script>
+</body>
+
+</html>

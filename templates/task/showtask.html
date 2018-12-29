@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/role -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <title>ShowTask</title>
+    <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+    <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+    <style>
+    @media (device-height:667px) and (-webkit-min-device-pixel-ratio:2) {
+        /* 兼容iphone6 */
+         .mob-hide {
+            display: none;
+        }
+    }
+    
+    /*@media (device- height: 667px) and (-webkit-min-device-pixel-ratio: 2) {
+        .mob-hide {
+            display: none;
+        }
+    }*/
+    /* @media screen and (max-width: 480px) {
+        .mob-hide {
+            display: none;
+        }
+    }*/
+    </style>
+</head>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+    <!--start  搜索end-->
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Show Task</span></h3>
+    <div id="adminMenu"></div>
+    <script>
+    //生成增加方法的界面
+    $.ajax({
+        type: "get",
+
+        url: "/task/show",
+        data: {
+            type: "showtask"
+        },
+        success: function(privigedata) {
+
+            // console.log(privigedata.data);
+
+            var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger">';
+            menuHtml += '<td>id</td><td class="mob-hide">task_name</td><td class="mob-hide">task_shell</td><td class="mob-hide">task_shell_params</td><td>task_type_desc</td><td class="mob-hide">create_date</td><td>pusher</td><td>status_desc</td><td>option</td><td>View</td></tr>';
+
+            $.each(privigedata.data,
+                function(i, n) {
+                    menuHtml += '<tr><td>' + n.id + '</td>';
+                    // console.log(n.taskname);
+                    if (n.taskname == undefined) {
+                        menuHtml += '<td>Daily tasks</td>';
+                    } else {
+                        menuHtml += '<td class="mob-hide">' + n.taskname + '</td>';
+                    }
+                    // menuHtml += '<td>'+n.task_name+'</td>';
+                    menuHtml += '<td class="mob-hide">' + n.task_shell + '</td>';
+                    menuHtml += '<td class="mob-hide">' + n.shell_params + '</td>';
+                    menuHtml += '<td>' + n.task_type_desc + '</td>';
+                    menuHtml += '<td class="mob-hide">' + n.create_time + '</td>';
+                    menuHtml += '<td>' + n.pusher + '</td>';
+
+                    if (n.status_id == 501) {
+                        menuHtml += '<td ><input type="button" class="btn btn-xs btn-primary"  onclick="PushTaskNow(' + n.id + ')" name="Cancel" value="Push Task" /></td>';
+                    } else {
+                        menuHtml += '<td>' + n.status_desc + '</td>';
+                    }
+
+
+                    if (n.status_id == 501) {
+                        menuHtml += '<td ><input type="button" class="btn btn-xs btn-primary" id="Cancel" onclick="CancelTask(' + n.id + ')" name="Cancel" value="Cancel" /></td>';
+                    } else if (n.status_id == 1003 | n.status_id == 1004) {
+                        menuHtml += '<td ><input  type="button" class="btn btn-xs btn-danger"  id="Cancel" onclick="RePushTask(' + n.id + ')" name="RePush" value="RePush" /></td>';
+
+                    } else {
+                        menuHtml += '<td ><input disabled="true" type="button" class="btn btn-xs btn-primary" id="Cancel" onclick="CancelTask(' + n.id + ')" name="Cancel" value="Cancel" /></td>';
+                    }
+
+                    if (n.status_id == 501) {
+                        menuHtml += '<td ><input  disabled="true" type="button" class="btn btn-xs btn-primary"  onclick="ViewLog(' + n.id + ')" name="Cancel" value="View log" /></td></tr>';
+                    } else {
+                        menuHtml += '<td ><input type="button" class="btn btn-xs btn-primary"  onclick="ViewLog(' + n.id + ')" name="Cancel" value="View log" /></td></tr>';
+                    }
+
+                });
+            menuHtml += '<tbody></table>';
+            $("#adminMenu").empty().html(menuHtml);
+            // alert($(window).width());
+            // alert(window.screen.height);
+        }
+    });
+
+    function ViewLog(id) {
+        // window.location.href = "/task/showlog?type=showlog&task_id="+id;
+        window.location.href = "/task/tasklog?task_id=" + id;
+
+    }
+
+    function RePushTask(id) {
+        confirm_ = confirm('RePush this Task! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "get",
+                url: "/task/show",
+                data: {
+                    task_id: id,
+                    type: "repushtask"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        alert("Push Task OK!");
+                        window.location.href = "/task/show";
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    function CancelTask(id) {
+        confirm_ = confirm('Cancel this Task! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "get",
+                url: "/task/show",
+                data: {
+                    task_id: id,
+                    type: "canceltask"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        alert("Cancel Task OK!");
+                        window.location.href = "/task/show";
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    function PushTaskNow(id) {
+        confirm_ = confirm('This Task will show to Client! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "get",
+                url: "/task/show",
+                data: {
+                    task_id: id,
+                    type: "pushtask"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        alert("Push Task OK!");
+                        window.location.href = "/task/show";
+                    }
+                }
+            });
+        }
+
+    }
+    </script>
+</body>
+
+</html>

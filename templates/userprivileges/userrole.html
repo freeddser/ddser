@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+</head>
+<script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+<link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+
+<body style="background-color:#ecf0f5; height:721px; width:100%; overflow:auto;">
+    <h3 id="role-title"><span class="label label-primary">User Role Info</span></h3>
+     <div id="userlist" ></div>
+    <div id="JJ" ></div>
+   
+</body>
+<script>
+function GetOneUserRole(id) {
+    jQuery.ajax({
+        type: "GET",
+        url: "/admin/manager/userrole?type=getonerole&id=" + id,
+        data: {},
+        success: function(data) {
+            // console.log(data);
+            var jsonObject = data.data;
+            //append arr
+            var nowid = "";
+
+            var leni = jsonObject.length;
+            for (i = 0; i < leni; i++) {
+
+                nowid = "cb" + jsonObject[i]['id'];
+                $("#" + nowid).attr('checked', "true");
+
+            }
+
+        }
+    });
+}
+
+
+
+function UpdateUserRole(id) {
+    var roleidCX = jQuery("input[name='cb1']:checked").serialize();
+    // alert(roleidCX);
+    jQuery.ajax({
+        type: "POST",
+        url: "/admin/manager/userrole",
+        data: {
+            type: "update",
+            roleidCX: roleidCX,
+            userid: id
+        },
+        success: function(data) {
+            window.location.href = "/admin/manager/userrole";
+        }
+    });
+
+
+}
+
+
+function modifyUserRole(id, username) {
+    jQuery.ajax({
+        type: "GET",
+        url: "/admin/manager/userrole",
+        data: {
+            type: "getallrole"
+        },
+        success: function(data) {
+            console.log(data);
+            var jsonObject = data.data;
+            var leni = jsonObject.length;
+            var updatehtml = '<h3 id="userlist"><span class="label label-primary">User  ' + username + '  Role Info:</span></h3> ';
+            for (i = 0; i < leni; i++) {
+                updatehtml += '<input class="text-error"  type="checkbox" id="cb' + jsonObject[i]['id'] + '" name="cb1" value="' + jsonObject[i]['id'] + '"> ' + jsonObject[i]['role_name'] + "</br>"
+            }
+            updatehtml += '<input type="button" value="submit" onclick="UpdateUserRole(' + id + ')" class="btn btn-sm btn-info"/>';
+             $("#JJ").hide();
+             $("#role-title").hide();
+            $("#userlist").empty().html(updatehtml);
+           
+            GetOneUserRole(id);
+
+        }
+    });
+}
+
+
+
+
+// 显示当前所有用户的所有角色信息
+jQuery.ajax({
+    type: "POST",
+    url: "/admin/manager/userrole",
+    data: {},
+    success: function(data) {
+        // console.log(data);
+        data = data.data;
+        var result = data;
+        var len = result.length;
+        // console.log(result);
+        users = {};
+        for (i = 0; i < len; i++) {
+
+            var key = 'user' + result[i].user_id;
+            if (users[key]) {
+
+                var role = {
+                    'role_id': result[i].role_id,
+                    'role_name': result[i].role_name
+                }
+
+                users[key]['roles'].push(role);
+
+            } else {
+
+                users[key] = {};
+                users[key]['user_id'] = result[i].user_id;
+                users[key]['username'] = result[i].username;
+                users[key]['create_date'] = result[i].create_date;
+
+                var role = {
+                    'role_id': result[i].role_id,
+                    'role_name': result[i].role_name
+                }
+
+                users[key]['roles'] = [role];
+
+            }
+
+        }
+
+        var cooked = [];
+
+        for (key in users) {
+            cooked.push(users[key]);
+        }
+
+
+
+        var cookeslen = cooked.length;
+        hhtmo = '<table border="1px" bgcolor="#8a2be2"><tr><td>UserID</td><td>UserName</td><td>RoleName</td><td>CreateDate</td><td>option</td></tr>';
+        hhtmo = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger"><td>UserID</td><td>UserName</td><td>RoleName</td><td>create_date</td><td>operation</td> </tr>';
+        for (i = 0; i < cookeslen; i++) {
+            if (cooked[i]['user_id'] == null) {
+                hhtmo += '<tr bgcolor="#ff6347"><td>100000</td><td>' + cooked[i]['username'] + '</td><td>';
+
+            } else {
+                hhtmo += '<tr bgcolor="#ffe4c4"><td>' + cooked[i]['user_id'] + '</td><td>' + cooked[i]['username'] + '</td><td>';
+
+            }
+
+            var roleslen = cooked[i]['roles'].length;
+
+            if (cooked[i]['roles'][0]['role_name'] == null) {
+                hhtmo += "no Role!"
+            } else {
+                for (j = 0; j < roleslen; j++) {
+                    hhtmo += cooked[i]['roles'][j]['role_name'] + "&nbsp;";
+                }
+
+            }
+
+            hhtmo += '</td><td>' + cooked[i]['create_date'];
+            hhtmo += '</td><td><a href="#" onclick=modifyUserRole(' + cooked[i]['user_id'] + ',"' + cooked[i]['username'] + '")>Modify</a></td></tr>';
+
+
+        }
+
+        hhtmo += ' </tbody></table>';
+
+        $("#JJ").empty().html(hhtmo);
+
+    }
+});
+</script>
+
+</html>

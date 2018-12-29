@@ -1,0 +1,179 @@
+<!doctype html>
+    <html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0" />
+<title>登录</title>
+<link href="/static/tpl/default/images/favicon.png" rel="icon"/>
+<link rel="stylesheet" type="text/css" href="/static/tpl/default/css/bootstrap.min.css" />
+
+<style type="text/css">
+html,body {
+	height: 100%;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #CA0707;
+  background-color: #fff;
+}
+
+/*.body {
+  
+}*/
+
+.box {
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6699FF', endColorstr='#6699FF'); /*  IE */
+	background-image:linear-gradient(bottom, #676E7C 0%, #6699FF 100%);
+	background-image:-o-linear-gradient(bottom, #676E7C 0%, #6699FF 100%);
+	background-image:-moz-linear-gradient(bottom, #676E7C 0%, #6699FF 100%);
+	background-image:-webkit-linear-gradient(bottom, #676E7C 0%, #6699FF 100%);
+	background-image:-ms-linear-gradient(bottom, #676E7C 0%, #6699FF 100%);
+	
+	margin: 0 auto;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.login-box {
+	width: 100%;
+	max-width:500px;
+	height: 400px;
+	position: absolute;
+	top: 50%;
+
+	margin-top: -200px;
+	/*设置负值，为要定位子盒子的一半高度*/
+	
+}
+@media screen and (min-width:500px){
+	.login-box {
+		left: 50%;
+		/*设置负值，为要定位子盒子的一半宽度*/
+		margin-left: -250px;
+	}
+}	
+
+a {
+  color: #93E265;
+  text-decoration: none;
+}
+
+.form {
+	width: 100%;
+	max-width:500px;
+	height: 275px;
+	margin: 25px auto 0px auto;
+	padding-top: 25px;
+}	
+.login-content {
+	height: 300px;
+	width: 100%;
+	max-width:500px;
+	background-color: rgba(255, 250, 2550, .6);
+	float: left;
+}		
+	
+	
+.input-group {
+	margin: 0px 0px 20px 0px !important;
+}
+.form-control,
+.input-group {
+	height: 40px;
+}
+
+.form-group {
+	margin-bottom: 0px !important;
+}
+.login-title {
+	padding: 20px 10px;
+	background-color: rgba(0, 0, 0, .6);
+}
+.login-title h1 {
+	margin-top: 10px !important;
+}
+.login-title small {
+	color: #fff;
+}
+
+.link p {
+	line-height: 20px;
+	margin-top: 30px;
+}
+.btn-sm {
+	padding: 8px 24px !important;
+	font-size: 16px !important;
+}
+</style>
+
+</head>
+
+<body>
+<div class="box">
+		<div class="login-box">
+			<div class="login-title text-center">
+				<h1><small>登录</small></h1>
+			</div>
+			<div class="login-content ">
+			<div class="form">
+			<form action="/login" method="post">
+				<div class="form-group">
+					<div class="col-xs-12  ">
+						<div class="input-group">
+							<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+							<input type="text" id="username" name="username" class="form-control" placeholder="用户名">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12  ">
+						<div class="input-group">
+							<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+							<input  type="password" id="password" name="password"  class="form-control" placeholder="密码">
+						</div>
+					</div>
+				</div>
+
+						<div class="form-group">
+							<div class="col-xs-12  ">
+					<div class="input-group">
+								&nbsp;&nbsp;&nbsp;&nbsp;Code:<img  src="/pic" alt="验证码" id="refrushyzm"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="text" name="yzm"  value=""> [[.loginstatus]]
+						</div>
+						</div>
+					</div>
+
+				<div class="form-group form-actions">
+					<div class="col-xs-4 col-xs-offset-4 ">
+						<button type="submit" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-off"></span> 登录</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-6 link">
+						<p class="text-center remove-margin" style="display:none;"><small>忘记密码？</small> <a href="javascript:void(0)" ><small>找回</small></a>
+						</p>
+					</div>
+					<div class="col-xs-6 link">
+						<p class="text-center remove-margin" style="display:none;"><small>还没注册?</small> <a href="javascript:void(0)" ><small>注册</small></a>
+						</p>
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div style="text-align:center;background-color:#ecf0f5;">
+<p> <strong>Copyright &copy; 2015-2017 <a href="http://www.scpman.com">Ddser</a>.</strong> All rights reserved.</p>
+</div>
+<script language='javascript' src='/static/tpl/default/js/jQuery-2.1.4.min.js'></script>
+<script language='javascript'>
+$('#refrushyzm').click(function(){
+	$('#refrushyzm').attr('src','/pic'+'?'+Math.random());
+        });
+</script>
+</body>
+
+</html>
+

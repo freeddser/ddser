@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/user -->
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+  <meta charset="utf-8" /> 
+  <title>User</title> 
+  <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" /> 
+  <style type="text/css">
+     ．panel{
+        width:56%;
+     }
+     .panel-body p{
+        float:left;
+        margin-right:30px;
+
+     }
+     @media screen and (max-width: 480px){
+        .panel{
+            width:100%;
+        }
+        .panel-body .panel-btn{
+           clear:both;
+        }
+     }
+     
+  </style>
+   <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script> 
+  <script type="text/javascript">
+        function UserDelid(id) {
+            confirm_ = confirm('This action will delete current user! Are you sure?');
+            if (confirm_) {
+
+                jQuery.ajax({
+                    type: "GET",
+                    url: "/admin/manager/user?type=delete&id=" + id,
+                    data: {
+                    },
+                    success: function (data) {
+                        if (data == "1") {
+                            
+                            window.location.href = "/admin/manager/user";
+                        }
+                    }
+                });
+            }
+        }
+
+    </script> 
+ </head> 
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+ 
+ <!--start  搜索end-->
+ 
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">User List</span></h3> 
+    <div id="adminMenu"></div>
+   
+  
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Add New User</span></h3> 
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">New User Info</h3>
+        </div>
+        <div class="panel-body">
+            <p><span style="padding:5px;">username:</span><input type="text" id="username" name="username" value="" /></p>
+            <p><span style="padding:5px;">password:</span><input type="text" id="password" name="password" value="" /></p>
+            <p class="panel-btn"><input type="button" name="button" class="btn btn-xs btn-primary" value="ADD" onclick="AddNewUser()" /></p>
+        </div>
+    </div>
+    
+
+<!-- 修改用户 -->
+    <div id="modifyuser-div" style="display:none;">
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Modify User</span></h3> 
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">User Info</h3>
+        </div>
+        <div class="panel-body">
+            <p><span style="padding:5px;">username:</span><input type="text" id="modifyusername"name="username" value="" /></p>
+            <p><span style="padding:5px;">
+            password:</span>
+            <input type="text" id="modifypassword" name="password" value="" /></p>
+            <input type="button" style="display:none;" id="modifyid" name="modifyid" value=""  />
+            <p class="panel-btn"><input type="button" name="button" class="btn btn-xs btn-primary" value="Modify" onclick="UpdateUser()" /></p>
+        </div>
+    </div>
+ </div>
+
+ 
+  <script>
+
+
+    function ModifyUser(id) {
+        jQuery.ajax({
+            type: "GET",
+            url: "/admin/manager/user?type=showoneuser&id=" + id,
+            data: {
+            },
+            success: function (oneuserinfo) {
+
+                var oneuserinfo=oneuserinfo.data;
+
+                $("#modifyuser-div").css("display","block");
+                $("#modifyusername").val(oneuserinfo[0]['username']);
+                $("#modifyusername").attr('disabled',"true");
+                $("#modifypassword").val(oneuserinfo[0]['password']);
+                $("#modifyid").val(oneuserinfo[0]['id']);
+                
+                
+                 // var numid = oneuserinfo[0]['id'];
+                // jQuery("#hrbz").html(updatehtml);
+            }
+        });
+
+    }
+
+
+function UpdateUser() {
+        var bz = new Array();
+        bz.push('modifyusername');
+        bz.push('modifypassword');
+        bz.push('modifyid')
+        for (var i in bz) {
+            if (jQuery("#" + bz[i]).val() == "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will update current user! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/manager/user",
+                data: {'modifyid': jQuery("#modifyid").val(),
+                type:"update",
+                    modifyusername: jQuery("#modifyusername").val(),
+                    modifypassword: jQuery("#modifypassword").val()
+                },
+                success: function (data) {
+                    if (data == "1") {
+                        window.location.href = "/admin/manager/user";
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
+    $.ajax({
+    type: "post",
+    
+    url: "/admin/manager/user",
+    data: {},
+    success: function(privigedata) {
+
+        console.log(privigedata.data);
+        var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger"><td>username</td><td>password</td><td>create_date</td><td>id</td><td>operation</td><td>UserDelid</td> </tr>';
+        $.each(privigedata.data,
+        function(i, n) {
+                menuHtml += '<tr><td>'+n.username+'</td>';
+                menuHtml += '<td>'+n.password+'</td>';
+                menuHtml += '<td>'+n.create_date+'</td>';
+                menuHtml += '<td>'+n.id+'</td>';
+                menuHtml +='<td><a href="#" onclick="ModifyUser('+n.id+')">Modify</a></td>'
+                menuHtml +='<td><a href="#" onclick="UserDelid('+n.id+')">Delete</a></td></tr>'
+        });
+        menuHtml += '<tbody></table>';
+        
+
+         
+        $("#adminMenu").empty().html(menuHtml);
+
+
+    }
+});
+
+
+
+    function AddNewUser() {
+        var bz = new Array();
+        bz.push('username');
+        bz.push('password');
+
+        for (var i in bz) {
+            if (jQuery("#" + bz[i]).val() == "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will add current order! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/manager/user",
+                data: {username: jQuery("#username").val(),
+                    password: jQuery("#password").val(),
+                    type:"add"
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data == "1") {
+                        window.location.href = "/admin/manager/user";
+                    }
+                }
+            });
+        }
+    }
+
+
+    
+</script> 
+ </body>
+</html>

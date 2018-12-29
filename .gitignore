@@ -1,0 +1,7 @@
+/nohup.out
+/.idea
+ddser_client
+ddser_server
+config.toml
+cmd/client/config.toml
+cmd/server/config.toml

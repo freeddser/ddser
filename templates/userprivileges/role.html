@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost:9090/admin/manager/role -->
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+  <meta charset="utf-8" /> 
+  <title>Role</title> 
+  <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" /> 
+   <script src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script> 
+  <script type="text/javascript">
+        function RoleDelid(id) {
+            confirm_ = confirm('This action will delete current Role! Are you sure?');
+            if (confirm_) {
+
+                jQuery.ajax({
+                    type: "GET",
+                    url: "/admin/manager/role?type=delete&id=" + id,
+                    data: {
+                    },
+                    success: function (data) {
+                        if (data == "1") {
+                            
+                            window.location.href = "/admin/manager/role";
+                        }
+                    }
+                });
+            }
+        }
+
+    </script> 
+ </head> 
+ <style type="text/css">
+     ．panel{
+        width:56%;
+     }
+     .panel-body p{
+        float:left;
+        margin-right:30px;
+
+     }
+     @media screen and (max-width: 480px){
+        .panel{
+            width:100%;
+        }
+        .panel-body .panel-btn{
+           clear:both;
+        }
+     }
+     
+  </style>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+
+ 
+ <!--start  搜索end-->
+ 
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Role List</span></h3> 
+    <div id="adminMenu"></div>
+   
+  
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Add New Role</span></h3> 
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">New Role Info</h3>
+        </div>
+        <div class="panel-body">
+            <p><span style="padding:5px;">Rolename:</span><input type="text" id="rolename" name="rolename" value="" /></p>
+            <p class="panel-btn"><input type="button" name="button" class="btn btn-xs btn-primary" value="ADD" onclick="AddNewRole()" /></p>
+        </div>
+    </div>
+    
+
+<!-- 修改用户 -->
+    <div id="modifyRole-div" style="display:none;">
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">Modify Role</span></h3> 
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Role Info</h3>
+        </div>
+        <div class="panel-body">
+            <p><span style="padding:5px;">Rolename:</span><input type="text" id="modifyrolename"name="rolename" value="" /></p>
+            <input type="button" style="display:none;" id="modifyid" name="modifyid" value=""  />
+            <p class="panel-btn"><input type="button" name="button" class="btn btn-xs btn-primary" value="Modify" onclick="UpdateRole()" /></p>
+        </div>
+    </div>
+ </div>
+
+ 
+  <script>
+
+
+    function ModifyRole(id) {
+        jQuery.ajax({
+            type: "GET",
+            url: "/admin/manager/role?type=showonerole&id=" + id,
+            data: {
+            },
+            success: function (oneRoleinfo) {
+
+                var oneRoleinfo=oneRoleinfo.data;
+                console.log(oneRoleinfo);
+
+                $("#modifyRole-div").css("display","block");
+                $("#modifyrolename").val(oneRoleinfo[0]['role_name']);
+                // $("#modifyRolename").attr('disabled',"true");
+                // $("#modifypassword").val(oneRoleinfo[0]['password']);
+                $("#modifyid").val(oneRoleinfo[0]['id']);
+                
+                
+                 // var numid = oneRoleinfo[0]['id'];
+                // jQuery("#hrbz").html(updatehtml);
+            }
+        });
+
+    }
+
+
+function UpdateRole() {
+        var bz = new Array();
+        bz.push('modifyrolename');
+        // bz.push('modifypassword');
+        bz.push('modifyid')
+        for (var i in bz) {
+            if (jQuery("#" + bz[i]).val() == "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will update current Role! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/manager/role",
+                data: {'modifyid': jQuery("#modifyid").val(),
+                type:"update",
+                    modifyrolename: jQuery("#modifyrolename").val(),
+                    // modifypassword: jQuery("#modifypassword").val()
+                },
+                success: function (data) {
+                    if (data == "1") {
+                        window.location.href = "/admin/manager/role";
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
+    $.ajax({
+    type: "post",
+    
+    url: "/admin/manager/role",
+    data: {},
+    success: function(privigedata) {
+
+        console.log(privigedata.data);
+        var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger"><td>Rolename</td><td>create_date</td><td>id</td><td>operation</td><td>RoleDelid</td> </tr>';
+        $.each(privigedata.data,
+        function(i, n) {
+                menuHtml += '<tr><td>'+n.role_name+'</td>';
+                menuHtml += '<td>'+n.create_date+'</td>';
+                menuHtml += '<td>'+n.id+'</td>';
+                menuHtml +='<td><a href="#" onclick="ModifyRole('+n.id+')">Modify</a></td>'
+                menuHtml +='<td><a href="#" onclick="RoleDelid('+n.id+')">Delete</a></td></tr>'
+        });
+        menuHtml += '<tbody></table>';
+        
+
+         
+        $("#adminMenu").empty().html(menuHtml);
+
+
+    }
+});
+
+
+
+    function AddNewRole() {
+        var bz = new Array();
+        bz.push('rolename');
+
+        for (var i in bz) {
+            if (jQuery("#" + bz[i]).val() == "") {
+                alert(bz + " can not null");
+                return false;
+            }
+        }
+        confirm_ = confirm('This action will add current order! Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/manager/role",
+                data: {rolename: jQuery("#rolename").val(),
+                    type:"add"
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data == "1") {
+                        window.location.href = "/admin/manager/role";
+                    }
+                }
+            });
+        }
+    }
+
+
+    
+</script> 
+ </body>
+</html>

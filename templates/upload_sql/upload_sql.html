@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://localhost:9090/qraved/update -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/tpl/default/css/bootstrap.min.css" />
+</head>
+
+<body style="background-color:#ecf0f5; height:700px; width:100%; overflow:auto;">
+    <div class="container">
+        <!--    <div class="header clearfix" style="border-bottom:1px solid #ccc;">
+            <h3 style="float:left;" class="text-muted">EXCUTE SQL TASK</h3>
+        </div> -->
+        <div style="margin-top:10px;">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">upload sql file</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-inline" id="form1" enctype="multipart/form-data" method="post">
+                        <div class="form-group">
+                            <input type="file" name="uploadFile" id="uploadFile" onchange="check()">
+                            <p class="help-block" id="hintInfo">select a sql file</p>
+                            <input type="button" id="uploadBtn" onclick="upload()" class="btn btn-sm btn-info" value="upload" />
+                            <!-- <input type="button" id="checkBtn" onclick="checksql()" class="btn btn-sm btn-danger" value="check" style="display:none;" /> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h3 style="margin-bottom:20px;"><span class="label label-primary">File List:</span></h3>
+    <!-- sql文件列表 -->
+    <div id="adminMenu"></div>
+    <script language="javascript" src="/static/tpl/default/js/jQuery-2.1.4.min.js"></script>
+    <script language="javascript" src="/static/tpl/default/js/jquery.form.js"></script>
+    <script language="javascript">
+    //是否允许上传操作
+    var fileSelected = false;
+
+
+    //是否上传成功
+    //var uploadSuccess = false;
+
+    //是否检测成功
+    var checkSuccess = false;
+
+    //文件大小限制
+    //var maxsize = 2*1024;//2M
+    var maxsize = 2 * 1024; //2KB
+
+    //检测文件类型
+    function check() {
+
+        $("#uploadBtn").show();
+        // $("#checkBtn").hide();
+
+        var file = $("#uploadFile").val();
+        console.log("filePath：" + file);
+        if (file == '' || file == null) {
+            $("#hintInfo").html("<span style='color:red;'>choose file</span>");
+            return false;
+        }
+
+        var index = file.lastIndexOf(".");
+        var ext = file.substring(index + 1, file.length);
+        console.log("filetype：" + ext);
+
+        if (ext != "sql" && ext != "SQL") {
+            $("#hintInfo").html("<span style='color:red;'>Wrong! only support sql file(*.sql)！</span>");
+            return false;
+        }
+
+        //检测文件大小
+
+        var obj = document.getElementById("uploadFile");
+        var fileSize = 0;
+        var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+        if (isIE && !obj.files) {
+            var filePath = obj.value;
+            var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+            var file = fileSystem.GetFile(filePath);
+            fileSize = file.Size;
+        } else {
+            fileSize = obj.files[0].size;
+        }
+        console.log(fileSize + "byte");
+        fileSize = Math.round(fileSize / 1024 * 100) / 100; //单位为KB
+        console.log(fileSize + "KB");
+
+        if (fileSize >= maxsize) {
+            $("#hintInfo").html("<span style='color:red;'>fileSize" + maxsize + "KB, please try again！</span>");
+            return false;
+        }
+
+        //获取文件名
+        var index2 = file.lastIndexOf("\\");
+        if (index < 0) {
+            index2 = file.lastIndexOf("/");
+        }
+        var filename = file.substring(index2 + 1, file.length);
+        console.log(filename);
+
+        $("#hintInfo").html("<span style='color:green;'>Choose:<span style='color:orange;'>" + filename + "</span>，Please click [upload]！</span>");
+        fileSelected = true;
+    }
+
+    //执行上传操作
+    function upload() {
+        if (!fileSelected) {
+            alert("Please use (*.sql)！");
+            return false;
+        }
+
+        //TO DO 执行上传操作
+        var options = {
+            url: '/upload/sql',
+            type: "post",
+            success: function(data) {
+                console.log("success");
+                console.log(data);
+                //上传成功后显示check按钮，隐藏upload按妞
+                if (data.status == 0) {
+                    $("#hintInfo").html("<span style='color:green;'>Upload successed!</span>");
+                    $("#uploadBtn").hide();
+                    window.location.href = "/upload/sql";
+                    // $("#checkBtn").show();
+
+                } else {
+                    //上传失败则显示提示信息
+                    //上传失败则显示提示信息
+                    htmlinfos = "<span style='color:red;'>sql syntax error </span><br>Xml error infos:<a href='" + data.xmllog + "' target='_blank'>Error Xml log</a>"
+                    $("#hintInfo").html(htmlinfos);
+                    $("#uploadBtn").show();
+
+
+                }
+
+            },
+            error: function() {
+
+                console.log("error");
+                console.log(data);
+
+                //上传失败则显示提示信息
+                $("#hintInfo").html("<span style='color:red;'>upload faild!</span>");
+                $("#uploadBtn").show();
+                // $("#checkBtn").hide();
+            }
+        };
+
+        // 将options传给ajaxForm
+        // $('#form1').ajaxForm(options);
+        $('#form1').ajaxSubmit(options);
+
+        /**
+        uploadSuccess = true;
+        if(uploadSuccess){
+            //上传成功后显示check按钮，隐藏upload按妞
+            $("#hintInfo").html("<span style='color:green;'>上传成功！</span>");
+            $("#uploadBtn").hide();
+            $("#checkBtn").show();
+        }else{
+            //上传失败则显示提示信息
+            $("#hintInfo").html("<span style='color:red;'>上传失败！</span>");
+            $("#uploadBtn").show();
+            $("#checkBtn").hide();
+        }
+        **/
+    }
+
+    function checksql() {
+
+        checkSuccess = true;
+        //根据槛车状态提示检测信息
+        if (checkSuccess) {
+            $("#hintInfo").html("<span style='color:green;'>check ok!</span>");
+
+        } else {
+            $("#hintInfo").html("<span style='color:green;'>check faild!</span>");
+        }
+    }
+
+
+    //显示sql文件列表
+    //生成增加方法的界面
+
+    $(document).ready(function() {
+
+
+        $.ajax({
+            type: "get",
+
+            url: "/upload/sql",
+            data: {
+                type: "showsqlfile"
+            },
+            success: function(privigedata) {
+
+                console.log(privigedata.data);
+                // var tasklogHtml = ""
+
+                var menuHtml = '<table class="table table-hover table-condensed" style="width:100%;"><tbody><tr class="danger">';
+                menuHtml += '<td>id</td><td>file_name</td><td>file_path</td><td>upload_date</td><td>Delete</td></tr>';
+
+                $.each(privigedata.data,
+                    function(i, n) {
+                        menuHtml += '<tr><td>' + n.id + '</td>';
+                        menuHtml += '<td>' + n.file_name + '</td>';
+                        menuHtml += '<td>' + n.file_path + '</td>';
+                        menuHtml += '<td>' + n.upload_date + '</td>';
+                        menuHtml += '<td ><input type="button" class="btn btn-xs btn-primary"  onclick="DeleteOneSqlFile(' + n.id + ')" name="Delete" value="Delete" /></td>';
+                        // var reg = new RegExp("SPACE", "g");
+                        // tasklogHtml += n.task_logs.replace(reg, "&nbsp;");
+
+                    });
+                menuHtml += '<tbody></table>';
+                $("#adminMenu").empty().html(menuHtml);
+
+            }
+        });
+    });
+
+
+
+    function DeleteOneSqlFile(id) {
+        confirm_ = confirm('Delete this SQL file? Are you sure?');
+        if (confirm_) {
+
+            jQuery.ajax({
+                type: "get",
+                url: "/upload/sql",
+                data: {
+                    file_id: id,
+                    type: "deletesqlfile"
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data == "1") {
+                        // alert("Push Task OK!");
+                        window.location.href = "/upload/sql";
+                    }
+                }
+            });
+        }
+    }
+    </script>
+</body>
+
+</html>
