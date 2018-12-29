@@ -1,0 +1,25 @@
+[server]
+AppName = "ddser"
+Run_Mode = "live"
+Run_Port = ":9090"
+
+#template
+ListDir      = "0x0001"
+UPLOAD_DIR   = "./static/uploads"
+TEMPLATE_DIR = "./templates"
+Tpl_Suffix   = ".html"
+
+#base path
+Base_Path = "/data/code/src"
+Shell_Path = "/util/shell/"
+ToolLib = "/util/toolLib/"
+Upload_file_Path = "/static/uploads/"
+
+[mysql]
+DBUSER   = "dev"
+DBPASSWD = "dev"
+DBHOST   = "127.0.0.1:3306"
+DBNAME   = "ddser"
+
+
+

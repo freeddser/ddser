@@ -1,0 +1,19 @@
+[server]
+ddser_server_url = "http://localhost:9090"
+ddser_server_token = "aa795812eb89cf18fa9483f7c5ca05f2"
+execute_time=10
+hostname = "web001"
+ip = "192.168.1.12"
+
+[task]
+deploy_to_projectB = "allow"
+
+[slack]
+web_hook_url = "https://hooks.slack.com/services/T034XULRY/B0A84MEEQ/j311111111111111111111111fa7WZVzIj"
+slack_channel = "#system"
+bot_name = "test"
+
+[switch]
+slack_message = "off"
+
+
