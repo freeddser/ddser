@@ -1,5 +1,10 @@
 <div align=center><img width="150" height="150" src="https://raw.githubusercontent.com/freeddser/ddser/master/static/tpl/default/images/favicon.png"/></div>
 
+
+### demo
+# http://demo.ddser.tech
+# admin/admin
+
 #### DDSER
 # A  tool for system admin, Give a shell for everyone
 # git clone https://github.com/freeddser/ddser.git
